@@ -153,11 +153,10 @@ export default function DownloaderForm() {
             <div className="flex flex-col md:flex-row gap-6 items-start">
               {/* Thumbnail */}
               <div className="w-full md:w-1/2 aspect-video relative rounded-xl overflow-hidden bg-slate-100 shadow-md flex-shrink-0 border border-slate-200">
-                <Image
+                <img
                   src={result.thumbnail}
                   alt={result.title}
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute bottom-2 right-2 bg-slate-900/80 text-white text-xs font-bold px-2 py-1 rounded">

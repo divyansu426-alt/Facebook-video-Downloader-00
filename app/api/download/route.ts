@@ -124,7 +124,8 @@ export async function POST(req: NextRequest) {
 
       // Check for facebook-media-downloader1 specific format
       if (apiData.direct_media_url) {
-        downloads.push({ quality: 'Original Quality', size: 'Unknown', url: apiData.direct_media_url });
+        downloads.push({ quality: 'HD', size: 'Unknown', url: apiData.direct_media_url });
+        downloads.push({ quality: 'SD', size: 'Unknown', url: apiData.direct_media_url });
       }
 
       // If we still didn't find links but there is a top level url
@@ -144,7 +145,7 @@ export async function POST(req: NextRequest) {
         data: {
           id: apiData.id || Math.random().toString(36).substring(7),
           title: apiData.title || apiData.description || 'Facebook Video',
-          thumbnail: apiData.thumbnail || apiData.cover || apiData.picture || 'https://picsum.photos/640/360?grayscale',
+          thumbnail: (apiData.thumbnail || apiData.cover || apiData.picture || 'https://picsum.photos/640/360?grayscale').replace(/&amp;/g, '&'),
           duration: apiData.duration ? `${Math.floor(apiData.duration/60)}:${(apiData.duration%60).toString().padStart(2, '0')}` : '-',
           downloads: downloads,
         },
