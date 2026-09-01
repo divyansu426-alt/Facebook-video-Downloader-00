@@ -69,49 +69,89 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Simulate backend processing delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Call the RapidAPI Facebook Downloader
+    const rapidApiKey = process.env.RAPIDAPI_KEY || '0bf1205397msh32af5754c135319p1c10c5jsnbc1d894ead1a';
+    
+    try {
+      const apiResponse = await fetch('https://facebook-media-downloader1.p.rapidapi.com/get_media', {
+        method: 'POST',
+        headers: {
+          'x-rapidapi-key': rapidApiKey,
+          'x-rapidapi-host': 'facebook-media-downloader1.p.rapidapi.com',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: parsedUrl.href })
+      });
 
-    // Simulate a failure for specific test cases or private videos
-    if (url.includes('private') || url.includes('restricted')) {
+      const apiData = await apiResponse.json();
+
+      // Check if API returned an error
+      if (!apiResponse.ok || (apiData.status === false) || (apiData.error)) {
+        return NextResponse.json(
+          { error: apiData.message || apiData.error || 'This video may be private or invalid.' },
+          { status: 400 }
+        );
+      }
+
+      // Parse the dynamic API response to match our frontend interface
+      const downloads = [];
+      
+      // Look for standard SD/HD keys or a links array
+      if (apiData.hd || apiData.hd_url || apiData.hdUrl) {
+        downloads.push({ quality: 'HD', size: 'Unknown', url: apiData.hd || apiData.hd_url || apiData.hdUrl });
+      }
+      if (apiData.sd || apiData.sd_url || apiData.sdUrl) {
+        downloads.push({ quality: 'SD', size: 'Unknown', url: apiData.sd || apiData.sd_url || apiData.sdUrl });
+      }
+      
+      // If it comes in an array format
+      if (apiData.links && Array.isArray(apiData.links)) {
+        apiData.links.forEach((link: any) => {
+          if (link.url) {
+            downloads.push({
+              quality: link.quality || link.resolution || 'Video',
+              size: link.size || 'Unknown',
+              url: link.url
+            });
+          }
+        });
+      } else if (apiData.data && apiData.data.links) {
+         // Some APIs wrap in 'data'
+         const linksObj = apiData.data.links;
+         if (linksObj.hd) downloads.push({ quality: 'HD', size: 'Unknown', url: linksObj.hd });
+         if (linksObj.sd) downloads.push({ quality: 'SD', size: 'Unknown', url: linksObj.sd });
+      }
+
+      // If we still didn't find links but there is a top level url
+      if (downloads.length === 0 && apiData.url) {
+        downloads.push({ quality: 'Original', size: 'Unknown', url: apiData.url });
+      }
+
+      if (downloads.length === 0) {
+        return NextResponse.json(
+          { error: 'No downloadable links found for this video. It might be private.' },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          id: apiData.id || Math.random().toString(36).substring(7),
+          title: apiData.title || apiData.description || 'Facebook Video',
+          thumbnail: apiData.thumbnail || apiData.cover || apiData.picture || 'https://picsum.photos/640/360?grayscale',
+          duration: apiData.duration ? `${Math.floor(apiData.duration/60)}:${(apiData.duration%60).toString().padStart(2, '0')}` : '-',
+          downloads: downloads,
+        },
+      });
+
+    } catch (apiError) {
+      console.error('RapidAPI Fetch Error:', apiError);
       return NextResponse.json(
-        { error: 'This video may be private or restricted.' },
-        { status: 403 }
+        { error: 'Failed to connect to the video processing service.' },
+        { status: 502 }
       );
     }
-
-    if (url.includes('error')) {
-      return NextResponse.json(
-        { error: 'This video cannot be processed.' },
-        { status: 422 }
-      );
-    }
-
-    // Return a mock successful response
-    // In a real application, this is where you would call an external API or service
-    // that legally and technically retrieves the video details and download links.
-    return NextResponse.json({
-      success: true,
-      data: {
-        id: Math.random().toString(36).substring(7),
-        title: 'Facebook Video ' + Math.floor(Math.random() * 1000),
-        thumbnail: 'https://picsum.photos/seed/' + Math.random() + '/640/360',
-        duration: '03:45',
-        downloads: [
-          {
-            quality: 'HD',
-            size: '24.5 MB',
-            url: '#mock-hd-download',
-          },
-          {
-            quality: 'SD',
-            size: '8.2 MB',
-            url: '#mock-sd-download',
-          },
-        ],
-      },
-    });
-
   } catch (error) {
     console.error('Download API Error:', error);
     return NextResponse.json(
