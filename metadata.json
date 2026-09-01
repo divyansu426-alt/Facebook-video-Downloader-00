@@ -1,0 +1,9 @@
+{
+  "name": "Facebook Video Downloader",
+  "description": "Download Facebook Videos Easily. Paste a public Facebook video link and download it in a few simple steps.",
+  "requestFramePermissions": [
+    "clipboard-read",
+    "clipboard-write"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
