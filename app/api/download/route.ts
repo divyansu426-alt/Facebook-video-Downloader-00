@@ -122,6 +122,11 @@ export async function POST(req: NextRequest) {
          if (linksObj.sd) downloads.push({ quality: 'SD', size: 'Unknown', url: linksObj.sd });
       }
 
+      // Check for facebook-media-downloader1 specific format
+      if (apiData.direct_media_url) {
+        downloads.push({ quality: 'Original Quality', size: 'Unknown', url: apiData.direct_media_url });
+      }
+
       // If we still didn't find links but there is a top level url
       if (downloads.length === 0 && apiData.url) {
         downloads.push({ quality: 'Original', size: 'Unknown', url: apiData.url });
