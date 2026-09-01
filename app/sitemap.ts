@@ -1,9 +1,10 @@
 import { MetadataRoute } from 'next';
+import { articles } from '@/data/articles';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.APP_URL || 'https://fb-video-downloader.vercel.app';
 
-  return [
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -35,4 +36,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
   ];
+
+  const blogPages: MetadataRoute.Sitemap = articles.map((article) => ({
+    url: `${baseUrl}/blog/${article.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...blogPages];
 }

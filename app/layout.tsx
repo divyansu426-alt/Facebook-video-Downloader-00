@@ -27,11 +27,19 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://facebook-video-downloader.com',
   },
+  // Google Search Console Site Verification Meta tag placeholder
+  verification: {
+    google: 'YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_STRING',
+  },
 };
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        {/* Google AdSense Script Placeholder */}
+        {/* <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossOrigin="anonymous"></script> */}
+      </head>
       <body className="antialiased text-slate-800 bg-slate-50 flex flex-col min-h-screen font-sans" suppressHydrationWarning>
         {children}
       </body>
