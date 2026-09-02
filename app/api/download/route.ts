@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Call the RapidAPI Facebook Downloader
-    const rapidApiKey = process.env.RAPIDAPI_KEY || '0bf1205397msh32af5754c135319p1c10c5jsnbc1d894ead1a';
+    const rapidApiKey = process.env.RAPIDAPI_KEY || '4374e1bc70msh9a5138f178b9400p101acfjsnb4497dc5dfab';
     
     try {
       const apiResponse = await fetch('https://facebook-media-downloader1.p.rapidapi.com/get_media', {
