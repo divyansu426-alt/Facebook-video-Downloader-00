@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import './globals.css'; // Global styles
 import '@/lib/firebase'; // Initialize Firebase App & Analytics
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'Facebook Video Downloader \u2013 Download Facebook Videos Online',
@@ -42,6 +43,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
       </head>
       <body className="antialiased text-slate-800 bg-slate-50 flex flex-col min-h-screen font-sans" suppressHydrationWarning>
         {children}
+        <Analytics />
       </body>
     </html>
   );
