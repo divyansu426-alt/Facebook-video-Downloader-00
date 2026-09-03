@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {SpeedInsights} from '@vercel/speed-insights/next';
 import './globals.css'; // Global styles
 import '@/lib/firebase'; // Initialize Firebase App & Analytics
 
@@ -42,6 +43,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
       </head>
       <body className="antialiased text-slate-800 bg-slate-50 flex flex-col min-h-screen font-sans" suppressHydrationWarning>
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
