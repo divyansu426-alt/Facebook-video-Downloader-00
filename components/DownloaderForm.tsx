@@ -48,7 +48,8 @@ export default function DownloaderForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Something went wrong. Please try again later.');
+        const errorMsg = data.error;
+        setError(typeof errorMsg === 'string' ? errorMsg : (errorMsg?.message || 'Something went wrong. Please try again later.'));
       } else {
         setResult(data.data);
         if (analytics) {

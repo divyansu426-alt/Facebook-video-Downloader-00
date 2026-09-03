@@ -104,8 +104,13 @@ export async function POST(req: NextRequest) {
            });
         }
 
+        let errorMessage = 'This video may be private or invalid.';
+        if (typeof apiData.message === 'string') errorMessage = apiData.message;
+        else if (typeof apiData.error === 'string') errorMessage = apiData.error;
+        else if (apiData.error && typeof apiData.error.message === 'string') errorMessage = apiData.error.message;
+
         return NextResponse.json(
-          { error: apiData.message || apiData.error || 'This video may be private or invalid.' },
+          { error: errorMessage },
           { status: 400 }
         );
       }
