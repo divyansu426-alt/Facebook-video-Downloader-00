@@ -70,8 +70,16 @@ export async function POST(req: NextRequest) {
     }
 
     // Call the RapidAPI Facebook Downloader
-    const rapidApiKey = process.env.RAPIDAPI_KEY || '4374e1bc70msh9a5138f178b9400p101acfjsnb4497dc5dfab';
-    
+    const rapidApiKey = process.env.RAPID_API;
+
+    if (!rapidApiKey) {
+      console.error('RAPID_API environment variable is not set.');
+      return NextResponse.json(
+        { error: 'The download service is not configured. Please try again later.' },
+        { status: 500 }
+      );
+    }
+
     try {
       const apiResponse = await fetch('https://facebook-media-downloader1.p.rapidapi.com/get_media', {
         method: 'POST',
